@@ -47,7 +47,6 @@ volatile int AS3935IrqTriggered;
 // is not a requirement
 
 #define IRQpin 2
-#define SS     3
 AS3935 AS3935(SPItransfer,SS,IRQpin);
 
 void setup()
@@ -86,9 +85,9 @@ void setup()
   // look up what pins can be used as interrupts on your specific board and how pins map to int numbers
 
   // ChipKit Max32 - irq connected to pin 2
-  attachInterrupt(1,AS3935Irq,RISING);
+  // attachInterrupt(1,AS3935Irq,RISING);
   // uncomment line below and comment out line above for Arduino Mega 2560, irq still connected to pin 2
-  // attachInterrupt(0,AS3935Irq,RISING);
+  attachInterrupt(0,AS3935Irq,RISING);
 }
 
 void loop()
