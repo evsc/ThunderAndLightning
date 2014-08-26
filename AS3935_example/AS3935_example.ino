@@ -47,7 +47,8 @@ volatile int AS3935IrqTriggered;
 // is not a requirement
 
 #define IRQpin 2
-AS3935 AS3935(SPItransfer,SS,IRQpin);
+#define CSpin 53
+AS3935 AS3935(SPItransfer,CSpin,IRQpin);
 
 void setup()
 {
@@ -70,13 +71,31 @@ void setup()
   if(!AS3935.calibrate())
     Serial.println("Tuning out of range, check your wiring, your sensor and make sure physics laws have not changed!");
 
+  
+//  for (byte i = 0; i <= 0x0F; i++) {
+//    int frequency = AS3935.tuneAntenna(i);
+//    Serial.print("tune antenna to capacitor ");
+//    Serial.print(i);
+//    Serial.print(" gives frequency: ");
+//    Serial.print(frequency);
+//    Serial.println();
+//    delay(200);
+//  }
+
+
+  AS3935.setNoiseFloor(1);
+  AS3935.setSpikeRejection(2);
+  AS3935.setWatchdogThreshold(1);
+
   // since this is demo code, we just go on minding our own business and ignore the fact that someone divided by zero
 
   // first let's turn on disturber indication and print some register values from AS3935
   // tell AS3935 we are indoors, for outdoors use setOutdoors() function
-  AS3935.setIndoors();
+  // AS3935.setIndoors();
+  AS3935.setOutdoors();
   // turn on indication of distrubers, once you have AS3935 all tuned, you can turn those off with disableDisturbers()
-  AS3935.enableDisturbers();
+  // AS3935.enableDisturbers();
+  AS3935.disableDisturbers();
   printAS3935Registers();
   AS3935IrqTriggered = 0;
   // Using interrupts means you do not have to check for pin being set continiously, chip does that for you and
@@ -132,12 +151,15 @@ void printAS3935Registers()
   int noiseFloor = AS3935.getNoiseFloor();
   int spikeRejection = AS3935.getSpikeRejection();
   int watchdogThreshold = AS3935.getWatchdogThreshold();
+  int minLightning = AS3935.getMinimumLightnings();
   Serial.print("Noise floor is: ");
   Serial.println(noiseFloor,DEC);
   Serial.print("Spike rejection is: ");
   Serial.println(spikeRejection,DEC);
   Serial.print("Watchdog threshold is: ");
-  Serial.println(watchdogThreshold,DEC);  
+  Serial.println(watchdogThreshold,DEC); 
+  Serial.print("Minimum Lightning is: ");
+  Serial.println(minLightning,DEC);   
 }
 
 // this is implementation of SPI transfer that gets passed to AS3935
