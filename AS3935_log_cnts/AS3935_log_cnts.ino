@@ -156,7 +156,7 @@ void loop() {
       incomingByte = Serial.read();
       every = (int) incomingByte;
       
-      Serial.print("3");
+      Serial.print("9");
       Serial.print(",");
       Serial.print(String(every));
       Serial.println();
@@ -176,13 +176,27 @@ void loop() {
       
       updateAS3935Registers();
       
-      Serial.print("4");
+      Serial.print("9");
       Serial.print(",");
       Serial.print(pNoiseFloor);
       Serial.print(",");
       Serial.print(pSpikeRejection);
       Serial.print(",");
       Serial.println(pWatchdog);
+    }
+    else if (mode == 'a') {
+      incomingByte = Serial.read();
+      byte tune = 5;
+      
+      long frequency = (long) AS3935.tuneAntenna(tune) * 1600;
+      
+      Serial.print("9");
+      Serial.print(",");
+      Serial.print(tune);
+      Serial.print(",");
+      Serial.print(String(frequency));
+      Serial.println();
+      
     }
   }
   
@@ -204,7 +218,9 @@ void loop() {
     if (irqSource & 0b0001) {
       // Serial.println("Noise level too high, try adjusting noise floor");
       if (commApp) {
-        
+        Serial.print("3");
+        Serial.print(",");
+        Serial.println("0");
       }
       cntNoiseLevel++;
     }
@@ -222,6 +238,9 @@ void loop() {
     if (irqSource & 0b0000) {
       strokeDistance = AS3935.lightningDistanceKm();
       if (commApp) {
+        Serial.print("4");
+        Serial.print(",");
+        Serial.println(strokeDistance);
       } else {
         Serial.print("Distance changed to ");
         Serial.print(strokeDistance,DEC);
@@ -236,7 +255,7 @@ void loop() {
       strokeDistance = AS3935.lightningDistanceKm();
       
       if (commApp) {
-        Serial.print("2");
+        Serial.print("1");
         Serial.print(",");
         Serial.println(strokeDistance);
       } else {
@@ -302,7 +321,7 @@ void recalibrate() {
   delay(50);
   pCapValue = AS3935.getBestTune();
   if (commApp) {
-    Serial.print("5");
+    Serial.print("9");
     Serial.print(",");
     Serial.print(String(pCapValue));
     Serial.println();

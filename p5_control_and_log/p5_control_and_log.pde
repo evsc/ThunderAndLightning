@@ -54,8 +54,8 @@ void setup() {
   historyLightning = new int[60];
   historyDisturber = new int[60];
   for (int i=0; i<60; i++) {
-    historyLightning[i] = (int) random(10);
-    historyDisturber[i] = (int) random(200);
+    historyLightning[i] = 0;
+    historyDisturber[i] = 0;
   }
   
 }
@@ -130,7 +130,7 @@ void draw() {
   int x = 20;
   float m = (width - (2*x) ) / (float) historyLightning.length;
   for (int i=0; i<60; i++) {
-    float v = historyLightning[i]*5;
+    float v = historyLightning[i]*10;
     vertex(x + i*m, 400 - v);
   }
   endShape();
@@ -150,7 +150,7 @@ void draw() {
   x = 20;
   m = (width - (2*x) ) / (float) historyDisturber.length;
   for (int i=0; i<60; i++) {
-    float v = historyDisturber[i] * 0.3;
+    float v = historyDisturber[i] * 1;
     vertex(x + i*m, 550 - v);
   }
   endShape();
@@ -204,6 +204,12 @@ void serialEvent(Serial myPort) {
       // receive disturber events
       // print("Man-made disturber");
       disturberEvent = true;
+    } else if (cnts[0] == 3) {
+      println("noise level too high");
+    } else if (cnts[0] == 4) {
+      print("head storm distance changed to ");
+      print(cnts[1]);
+      println("km");
     } else {
       // other communication
       for (int valNum = 0; valNum < cnts.length; valNum++) {
@@ -225,6 +231,10 @@ void serialEvent(Serial myPort) {
       print(" seconds, value = ");
       println(b);
     } 
+    else if (key == 'a') {
+      // tune antenna
+      myPort.write('a');
+    }
     else if (key == 't') {
       setThresholds();
     }

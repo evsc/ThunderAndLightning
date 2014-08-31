@@ -29,3 +29,5 @@ Blogposts about IC
 http://www.rs-online.com/designspark/electronics/blog/detecting-lightning-with-an-arduino
 
 http://coffeewithrobots.com/detecting-lightning-with-a-raspberry-pi/
+
+http://fll-freak.com/blog/?p=554
