@@ -263,6 +263,9 @@ void serialEvent(Serial myPort) {
       setWatchdog-=1;
       if (setWatchdog < 0) setWatchdog = 0;
     }
+    else if (key == 'p') {
+      saveFrame("screenshot/lightning_"+date+"_"+time+".png");
+    }
   }
   
   
