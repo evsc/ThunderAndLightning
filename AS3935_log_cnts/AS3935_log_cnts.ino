@@ -14,7 +14,7 @@
 #include <AS3935.h>
 
 
-void printAS3935Registers();
+void updateAS3935Registers();
 byte SPItransfer(byte sendByte);  // SPI communication with AS3935 IC
 void AS3935Irq();  // interrupt handler
 volatile int AS3935IrqTriggered;
@@ -80,7 +80,7 @@ void setup() {
   AS3935IrqTriggered = 0;
   attachInterrupt(0,AS3935Irq,RISING);
   
-  printAS3935Registers();
+  updateAS3935Registers();
   
   // now let's calibrate, after all the settings have been set
   // outputCalibrationValues();
@@ -119,6 +119,8 @@ void loop() {
       Serial.print(pSpikeRejection,DEC);
       Serial.print(",");
       Serial.print(pWatchdog,DEC);
+      Serial.print(",");
+      Serial.print(pCapValue,DEC);
       Serial.println();
     } else { 
       Serial.print("-");
@@ -141,37 +143,46 @@ void loop() {
   
   // does processing want us to change any settings?
   while (Serial.available() > 0) {
-    byte mode = Serial.read(); 
+    
+    int incomingByte = Serial.read();
+    byte mode = char(incomingByte);
+    
+    // apparently we need a slight delay here
+    // to make sure the second byte has arrived!
+    delay(50);
     
     if (mode == 'e') {
       // change the time interval
-      byte next = Serial.read();
-      every = (int) next;
+      incomingByte = Serial.read();
+      every = (int) incomingByte;
       
       Serial.print("3");
       Serial.print(",");
-      Serial.println(every);
+      Serial.print(String(every));
+      Serial.println();
+    }
+    else if (mode == 'c') {
+      recalibrate();
     }
     else if (mode == 't') {
        // set thresholds
-      byte next = Serial.read();
-      int noisefloor = (int) next;
-      next = Serial.read();
-      int spike = (int) next;
-      next = Serial.read();
-      int watchdog = (int) next;
+      int noisefloor = (int) Serial.read();
+      int spike = (int) Serial.read();
+      int watchdog = (int) Serial.read();
       
-//      AS3935.setNoiseFloor(pNoiseFloor);
-//      AS3935.setSpikeRejection(pSpikeRejection);
-//      AS3935.setWatchdogThreshold(pWatchdog);
+      AS3935.setNoiseFloor(noisefloor);
+      AS3935.setSpikeRejection(spike);
+      AS3935.setWatchdogThreshold(watchdog);
+      
+      updateAS3935Registers();
       
       Serial.print("4");
       Serial.print(",");
-      Serial.print(noisefloor);
+      Serial.print(pNoiseFloor);
       Serial.print(",");
-      Serial.print(spike);
+      Serial.print(pSpikeRejection);
       Serial.print(",");
-      Serial.println(watchdog);
+      Serial.println(pWatchdog);
     }
   }
   
@@ -211,9 +222,6 @@ void loop() {
     if (irqSource & 0b0000) {
       strokeDistance = AS3935.lightningDistanceKm();
       if (commApp) {
-        Serial.print("1");
-        Serial.print(",");
-        Serial.println(strokeDistance);
       } else {
         Serial.print("Distance changed to ");
         Serial.print(strokeDistance,DEC);
@@ -228,7 +236,9 @@ void loop() {
       strokeDistance = AS3935.lightningDistanceKm();
       
       if (commApp) {
-        
+        Serial.print("2");
+        Serial.print(",");
+        Serial.println(strokeDistance);
       } else {
         if (strokeDistance == 1)
           Serial.println("Storm overhead, watch out!");
@@ -251,7 +261,7 @@ void loop() {
 
 
 
-void printAS3935Registers() {
+void updateAS3935Registers() {
   pNoiseFloor = AS3935.getNoiseFloor();
   pSpikeRejection = AS3935.getSpikeRejection();
   pWatchdog = AS3935.getWatchdogThreshold();
@@ -290,10 +300,12 @@ void AS3935Irq()
 // calibrate the RLC circuit
 void recalibrate() {
   delay(50);
-  Serial.println();
   pCapValue = AS3935.getBestTune();
   if (commApp) {
-    
+    Serial.print("5");
+    Serial.print(",");
+    Serial.print(String(pCapValue));
+    Serial.println();
   } else {
     Serial.print("antenna calibration picks capacitor value:\t ");
     Serial.println(pCapValue);
