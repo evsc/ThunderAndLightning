@@ -1,6 +1,45 @@
 So far: 
 
-tuning of antenna works.
+tuning of antenna works. > change over time?
 
 need to set all thresholds properly to avoid false positives
 
+log out over time to judge thresholds
+- noise
+- disturber cnts
+- lightning cnts
+
+interrupts:
+- lightning event, with distance / energy
+
+compare to
+- blitzortung 
+
+
+
+Report:
+Antenna needs to be tuned to 500.000 Hertz. It is tuned by selecting the parameters of its RLC resonator. The capacitor of which is variable. You set the capacitor value, then you detect the current antenna frequency by counting the oscillation on the _IRQPin. Then you adjust if the value is not close to 500.000 Hz. 
+
+
+tune antenna to capacitor 0	 gives frequency: 3165 = 506400 Hz
+tune antenna to capacitor 1	 gives frequency: 3129 = 500640 Hz
+tune antenna to capacitor 2	 gives frequency: 3118 = 498880 Hz
+tune antenna to capacitor 3	 gives frequency: 3109 = 497440 Hz
+tune antenna to capacitor 4	 gives frequency: 3130 = 500800 Hz
+tune antenna to capacitor 5	 gives frequency: 3119 = 499040 Hz
+tune antenna to capacitor 6	 gives frequency: 3111 = 497760 Hz
+tune antenna to capacitor 7	 gives frequency: 3100 = 496000 Hz
+tune antenna to capacitor 8	 gives frequency: 3090 = 494400 Hz
+tune antenna to capacitor 9	 gives frequency: 3081 = 492960 Hz
+tune antenna to capacitor 10	 gives frequency: 3039 = 486240 Hz
+tune antenna to capacitor 11	 gives frequency: 3028 = 484480 Hz
+tune antenna to capacitor 12	 gives frequency: 3019 = 483040 Hz
+tune antenna to capacitor 13	 gives frequency: 3041 = 486560 Hz
+tune antenna to capacitor 14	 gives frequency: 3032 = 485120 Hz
+tune antenna to capacitor 15	 gives frequency: 3023 = 483680 Hz
+
+
+
+
+
+Arduino Mega (ATmega1280)

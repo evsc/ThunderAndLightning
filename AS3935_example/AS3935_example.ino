@@ -68,20 +68,32 @@ void setup()
   // and run calibration
   // if lightning detector can not tune tank circuit to required tolerance,
   // calibration function will return false
-  if(!AS3935.calibrate())
-    Serial.println("Tuning out of range, check your wiring, your sensor and make sure physics laws have not changed!");
-
   
-//  for (byte i = 0; i <= 0x0F; i++) {
-//    int frequency = AS3935.tuneAntenna(i);
-//    Serial.print("tune antenna to capacitor ");
-//    Serial.print(i);
-//    Serial.print(" gives frequency: ");
-//    Serial.print(frequency);
-//    Serial.println();
-//    delay(200);
-//  }
+  
+  //if(!AS3935.calibrate())
+  //  Serial.println("Tuning out of range, check your wiring, your sensor and make sure physics laws have not changed!");
 
+  // output the frequencies that the different capacitor values set:
+  for (byte i = 0; i <= 0x0F; i++) {
+    int frequency = AS3935.tuneAntenna(i);
+    Serial.print("tune antenna to capacitor ");
+    Serial.print(i);
+    Serial.print("\t gives frequency: ");
+    Serial.print(frequency);
+    Serial.print(" = ");
+    long fullFreq = (long) frequency*160;  // multiply with clock-divider, and 10 (because measurement is for 100ms)
+    Serial.print(fullFreq,DEC);
+    Serial.println(" Hz");
+    delay(100);
+  }
+
+
+  int calCap = AS3935.getBestTune();
+  Serial.print("antenna calibration picks value:\t ");
+  Serial.println(calCap);
+  delay(100);
+  
+  
 
   AS3935.setNoiseFloor(1);
   AS3935.setSpikeRejection(2);

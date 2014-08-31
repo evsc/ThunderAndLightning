@@ -57,6 +57,7 @@ public:
 	byte registerRead(byte reg, byte mask);
 	void reset();
 	bool calibrate();
+	int getBestTune();
 	int tuneAntenna(byte tuneCapacitor);
 	void powerDown();
 	void powerUp();

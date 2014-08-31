@@ -167,6 +167,58 @@ bool AS3935::calibrate()
 	return bestdiff > 109?false:true;
 }	
 
+
+int AS3935::getBestTune()
+{
+	int target = 3125, currentcount = 0, bestdiff = INT_MAX, currdiff = 0;
+	byte bestTune = 0, currTune = 0;
+	unsigned long setUpTime;
+	int currIrq, prevIrq;
+	// set lco_fdiv divider to 0, which translates to 16
+	// so we are looking for 31250Hz on irq pin
+	// and since we are counting for 100ms that translates to number 3125
+	// each capacitor changes second least significant digit
+	// using this timing so this is probably the best way to go
+	registerWrite(AS3935_LCO_FDIV,0);
+	registerWrite(AS3935_DISP_LCO,1);
+	// tuning is not linear, can't do any shortcuts here
+	// going over all built-in cap values and finding the best
+	for (currTune = 0; currTune <= 0x0F; currTune++) 
+	{
+		registerWrite(AS3935_TUN_CAP,currTune);
+		// let it settle
+		delay(2);
+		currentcount = 0;
+		prevIrq = digitalRead(_IRQPin);
+		setUpTime = millis() + 100;
+		while((long)(millis() - setUpTime) < 0)
+		{
+			currIrq = digitalRead(_IRQPin);
+			if (currIrq > prevIrq)
+			{
+				currentcount++;	
+			}
+			prevIrq = currIrq;
+		}
+		currdiff = target - currentcount;
+		// don't look at me, abs() misbehaves
+		if(currdiff < 0)
+			currdiff = -currdiff;
+		if(bestdiff > currdiff)
+		{
+			bestdiff = currdiff;
+			bestTune = currTune;
+		}
+	}
+	registerWrite(AS3935_TUN_CAP,bestTune);
+	delay(2);
+	registerWrite(AS3935_DISP_LCO,0);
+	// and now do RCO calibration
+	powerUp();
+	// if error is over 109, we are outside allowed tuning range of +/-3.5%
+	return bestTune;
+}
+
 void AS3935::powerDown()
 {
 	registerWrite(AS3935_PWD,1);
