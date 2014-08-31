@@ -23,13 +23,9 @@ Arduino library
 Arduino hardware library for the 
 [AS3935-Arduino-Library](https://github.com/raivisr/AS3935-Arduino-Library) by [Raivis Rengelis](https://github.com/raivisr)
 
-functions for
-* power up/down, reset
-* calibrate antenna
-
-
 
 Blogposts about IC
 ----
 http://www.rs-online.com/designspark/electronics/blog/detecting-lightning-with-an-arduino
 
+http://coffeewithrobots.com/detecting-lightning-with-a-raspberry-pi/

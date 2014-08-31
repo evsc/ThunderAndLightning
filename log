@@ -1,13 +1,19 @@
 So far: 
 
-tuning of antenna works. > change over time?
+setup with Arduino Mega (ATmega1280)
+tuning of antenna works
 
 need to set all thresholds properly to avoid false positives
+- watchdog threshold
+- noise floor threshold
+- spike rejection threshold
+- AFE gain (setIndoors or setOutdoors)
+
 
 log out over time to judge thresholds
-- noise
 - disturber cnts
 - lightning cnts
+- with current threshold values
 
 interrupts:
 - lightning event, with distance / energy
@@ -16,10 +22,16 @@ compare to
 - blitzortung 
 
 
+from
+https://github.com/SkyeSweeney/Striker/blob/5946bf5c8956c8979943eb6104f00f0a986eb134/as3935.h
+implement:
+- as3935_display_responance_freq_on_irq
+- as3935_get_energy_calc
 
 Report:
-Antenna needs to be tuned to 500.000 Hertz. It is tuned by selecting the parameters of its RLC resonator. The capacitor of which is variable. You set the capacitor value, then you detect the current antenna frequency by counting the oscillation on the _IRQPin. Then you adjust if the value is not close to 500.000 Hz. 
+Lightning is detected by sensing electromagnetic radiation.
 
+The incoming signal to the IC needs to be tuned to a resonant frequency of 500.000 Hertz, +-3.5%. It is tuned by selecting the parameters of its RLC resonator. The capacitor of which is variable (=tuning capacitor). You set the capacitor value (16 discrete options), then you detect the current antenna frequency by counting the oscillation on the _IRQPin. Then you adjust if the value is not close to 500.000 Hz. 
 
 tune antenna to capacitor 0	 gives frequency: 3165 = 506400 Hz
 tune antenna to capacitor 1	 gives frequency: 3129 = 500640 Hz
@@ -38,8 +50,12 @@ tune antenna to capacitor 13	 gives frequency: 3041 = 486560 Hz
 tune antenna to capacitor 14	 gives frequency: 3032 = 485120 Hz
 tune antenna to capacitor 15	 gives frequency: 3023 = 483680 Hz
 
+Changes to the IC thresholds seem to change the antenna frequency values, and therefore require recalibration calls.
 
 
 
-
-Arduino Mega (ATmega1280)
+Questions:
+- antenna capacitor tuning changes over time? or is due to hardware (antenna)?
+- difference btw intra-cloud and cloud-to-ground lightning?
+- what are the man-made disturbers?
+- Why 500khz? The proprietary algorithm in the Sensor IC seems to be hardcoded for signals at that range? 

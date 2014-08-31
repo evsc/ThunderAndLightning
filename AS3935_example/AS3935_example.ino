@@ -73,31 +73,17 @@ void setup()
   //if(!AS3935.calibrate())
   //  Serial.println("Tuning out of range, check your wiring, your sensor and make sure physics laws have not changed!");
 
-  // output the frequencies that the different capacitor values set:
-  for (byte i = 0; i <= 0x0F; i++) {
-    int frequency = AS3935.tuneAntenna(i);
-    Serial.print("tune antenna to capacitor ");
-    Serial.print(i);
-    Serial.print("\t gives frequency: ");
-    Serial.print(frequency);
-    Serial.print(" = ");
-    long fullFreq = (long) frequency*160;  // multiply with clock-divider, and 10 (because measurement is for 100ms)
-    Serial.print(fullFreq,DEC);
-    Serial.println(" Hz");
-    delay(100);
-  }
 
 
-  int calCap = AS3935.getBestTune();
-  Serial.print("antenna calibration picks value:\t ");
-  Serial.println(calCap);
-  delay(100);
-  
-  
+  outputCalibrationValues();
+  recalibrate();
 
   AS3935.setNoiseFloor(1);
   AS3935.setSpikeRejection(2);
   AS3935.setWatchdogThreshold(1);
+  
+  outputCalibrationValues();
+  recalibrate();
 
   // since this is demo code, we just go on minding our own business and ignore the fact that someone divided by zero
 
@@ -130,6 +116,8 @@ void loop()
   {
     // reset the flag
     AS3935IrqTriggered = 0;
+    // wait 2 ms before reading register (according to datasheet?)
+    delay(2);
     // first step is to find out what caused interrupt
     // as soon as we read interrupt cause register, irq pin goes low
     int irqSource = AS3935.interruptSource();
@@ -188,3 +176,30 @@ void AS3935Irq()
   AS3935IrqTriggered = 1;
 }
 
+
+void recalibrate() {
+  delay(50);
+  Serial.println();
+  int calCap = AS3935.getBestTune();
+  Serial.print("antenna calibration picks value:\t ");
+  Serial.println(calCap);
+  delay(50);
+}
+
+void outputCalibrationValues() {
+   // output the frequencies that the different capacitor values set:
+  delay(50);
+  Serial.println();
+  for (byte i = 0; i <= 0x0F; i++) {
+    int frequency = AS3935.tuneAntenna(i);
+    Serial.print("tune antenna to capacitor ");
+    Serial.print(i);
+    Serial.print("\t gives frequency: ");
+    Serial.print(frequency);
+    Serial.print(" = ");
+    long fullFreq = (long) frequency*160;  // multiply with clock-divider, and 10 (because measurement is for 100ms)
+    Serial.print(fullFreq,DEC);
+    Serial.println(" Hz");
+    delay(10);
+  }
+}
