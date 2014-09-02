@@ -4,10 +4,10 @@ setup with Arduino Mega (ATmega1280)
 tuning of antenna works
 
 need to set all thresholds properly to avoid false positives
-- watchdog threshold
-- noise floor threshold
-- spike rejection threshold
-- AFE gain (setIndoors or setOutdoors)
+- watchdog threshold : 0...7
+- noise floor threshold : 0...7
+- spike rejection threshold : 0...7
+- AFE gain : setIndoors..or..setOutdoors
 
 
 log out over time to judge thresholds
@@ -27,6 +27,7 @@ https://github.com/SkyeSweeney/Striker/blob/5946bf5c8956c8979943eb6104f00f0a986e
 implement:
 - as3935_display_responance_freq_on_irq
 - as3935_get_energy_calc
+
 
 Report:
 Lightning is detected by sensing electromagnetic radiation.
@@ -55,7 +56,21 @@ Changes to the IC thresholds seem to change the antenna frequency values, and th
 
 
 Questions:
+- what does the electromagnetic signal of lightning look like?
 - antenna capacitor tuning changes over time? or is due to hardware (antenna)?
 - difference btw intra-cloud and cloud-to-ground lightning?
-- what are the man-made disturbers?
-- Why 500khz? The proprietary algorithm in the Sensor IC seems to be hardcoded for signals at that range? 
+- what are the man-made disturbers in my environmet?
+- Why 500khz? The proprietary algorithm in the Sensor IC seems to be hardcoded for that frequency? 
+- should the antenna/IC be placed at a distance from the Arduino? 
+- orientation of antenna matters?
+
+
+
+
+
+
+
+
+http://www.wxforum.net/index.php?PHPSESSID=d3e68359878d46800250c378fd8e9b72&topic=22235.75
+
+http://www.wxforum.net/index.php?topic=22235.0

@@ -308,6 +308,11 @@ void appendTextToFile(String filename, String text){
   time = nf(hour(),2) + nf(minute(),2) + nf(second(),2);
   text = date + "," + time + "," + text;
   File f = new File(dataPath(filename));
+  
+  if (minute() == 0) {
+    saveFrame("screenshot/lightning_"+date+"_"+time+".png");
+  }
+  
   if(!f.exists()){
     createFile(f);
   }
