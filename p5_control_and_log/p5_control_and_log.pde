@@ -242,6 +242,10 @@ void serialEvent(Serial myPort) {
       myPort.write('c');
       println("COMMAND\trecalibrate");
     } 
+    else if (key == 'v') {
+      myPort.write('v');
+      println("COMMAND\toutput antenna frequencies");
+    } 
     else if (key == 'i') {
       setInterval+=5;
     }

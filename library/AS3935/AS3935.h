@@ -67,6 +67,7 @@ public:
 	int getMinimumLightnings();
 	int setMinimumLightnings(int minlightning);
 	int lightningDistanceKm();
+	int lightningEnergy();
 	void setIndoors();
 	void setOutdoors();
 	int getNoiseFloor();
@@ -77,6 +78,7 @@ public:
 	int setWatchdogThreshold(int wdth);
 	void clearStats();
 	int getIRQ();
+	int displayResonance(int on);
 private:
 	byte (*SPITransferFunc)(byte);
         byte _SPITransfer2(byte high, byte low);

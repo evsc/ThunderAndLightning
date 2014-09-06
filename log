@@ -25,7 +25,6 @@ compare to
 from
 https://github.com/SkyeSweeney/Striker/blob/5946bf5c8956c8979943eb6104f00f0a986eb134/as3935.h
 implement:
-- as3935_display_responance_freq_on_irq
 - as3935_get_energy_calc
 
 

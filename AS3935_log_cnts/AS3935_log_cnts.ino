@@ -33,6 +33,7 @@ int cntDisturber;
 int cntLightning;
 int cntNoiseLevel;
 int strokeDistance;
+int strokeEnergy;
 
 int timer;
 unsigned long currentTime;
@@ -164,6 +165,9 @@ void loop() {
     else if (mode == 'c') {
       recalibrate();
     }
+    else if (mode == 'v') {
+      outputCalibrationValues();
+    }
     else if (mode == 't') {
        // set thresholds
       int noisefloor = (int) Serial.read();
@@ -205,7 +209,7 @@ void loop() {
     
     AS3935IrqTriggered = 0; // reset flag
     
-    delay(2);   // wait 2 ms before reading register (according to datasheet)
+    delay(3);   // wait 2 ms before reading register (according to datasheet)
     
     // first step is to find out what caused interrupt
     // as soon as we read interrupt cause register, irq pin goes low
@@ -216,26 +220,32 @@ void loop() {
     //       bit 2 - disturber detected
     //       bit 3 - lightning!
     if (irqSource & 0b0001) {
-      // Serial.println("Noise level too high, try adjusting noise floor");
+      // NOISE
       if (commApp) {
         Serial.print("3");
         Serial.print(",");
         Serial.println("0");
+      } else {
+        Serial.println("Noise level too high, try adjusting noise floor");
       }
       cntNoiseLevel++;
     }
       
     if (irqSource & 0b0100) {
-      // Serial.println("Disturber detected");
+      // DISTURBER
       if (commApp) {
         Serial.print("2");
         Serial.print(",");
         Serial.println("0");
+      } else {
+        Serial.println("Disturber detected");
       }
       cntDisturber++;
     }
     
     if (irqSource & 0b0000) {
+      // LIGHTNING STRIKE
+      strokeEnergy = AS3935.lightningEnergy();
       strokeDistance = AS3935.lightningDistanceKm();
       if (commApp) {
         Serial.print("4");
@@ -336,21 +346,37 @@ void recalibrate() {
 // go through all 16 tuneCapacitor settings and 
 // output the resonant frequencies that they achieve
 void outputCalibrationValues() {
-   
   delay(50);
-  Serial.println();
+  if (!commApp) Serial.println();
+  
   for (byte i = 0; i <= 0x0F; i++) {
+    
     int frequency = AS3935.tuneAntenna(i);
-    Serial.print("tune antenna to capacitor ");
-    Serial.print(i);
-    Serial.print("\t gives frequency: ");
-    Serial.print(frequency);
-    Serial.print(" = ");
     // multiply with clock-divider, and 10 (because measurement is for 100ms)
     long fullFreq = (long) frequency*160;  
-    Serial.print(fullFreq,DEC);
-    Serial.println(" Hz");
+
+    if (commApp) {
+      Serial.print("9");
+      Serial.print(",");
+      Serial.print(i);
+      Serial.print(",");
+      Serial.print(frequency);
+      Serial.print(",");
+      Serial.print(fullFreq);
+      Serial.println();
+    } else {
+      Serial.print("tune antenna to capacitor ");
+      Serial.print(i);
+      Serial.print("\t gives frequency: ");
+      Serial.print(frequency);
+      Serial.print(" = ");
+      Serial.print(fullFreq,DEC);
+      Serial.println(" Hz");
+      
+    }
+    
     delay(10);
+    
   }
   
 }

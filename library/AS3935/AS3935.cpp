@@ -175,7 +175,7 @@ int AS3935::getBestTune()
 	unsigned long setUpTime;
 	int currIrq, prevIrq;
 	// set lco_fdiv divider to 0, which translates to 16
-	// so we are looking for 31250Hz on irq pin
+	// so we are looking for 31250Hz on irq pin (square wave)
 	// and since we are counting for 100ms that translates to number 3125
 	// each capacitor changes second least significant digit
 	// using this timing so this is probably the best way to go
@@ -187,7 +187,7 @@ int AS3935::getBestTune()
 	{
 		registerWrite(AS3935_TUN_CAP,currTune);
 		// let it settle
-		delay(2);
+		delay(10);
 		currentcount = 0;
 		prevIrq = digitalRead(_IRQPin);
 		setUpTime = millis() + 100;
@@ -229,6 +229,12 @@ void AS3935::powerUp()
 	registerWrite(AS3935_PWD,0);
 	_SPITransfer2(0x3D, 0x96);
 	delay(3);
+	
+	// Modify REG0x08[5] = 1
+	registerWrite(AS3935_DISP_TRCO,1);
+	delay(2);
+	// Modify REG0x08[5] = 0
+	registerWrite(AS3935_DISP_TRCO,0);
 }
 
 int AS3935::interruptSource()
@@ -258,6 +264,11 @@ int AS3935::setMinimumLightnings(int minlightning)
 }
 
 int AS3935::lightningDistanceKm()
+{
+	return registerRead(AS3935_DISTANCE);
+}
+
+int AS3935::lightningEnergy()
 {
 	return registerRead(AS3935_DISTANCE);
 }
