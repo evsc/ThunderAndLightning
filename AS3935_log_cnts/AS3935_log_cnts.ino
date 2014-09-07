@@ -28,6 +28,7 @@ int pSpikeRejection;
 int pWatchdog;
 int pMinLightning;
 int pCapValue;
+int pIndoors;
 
 int cntDisturber;
 int cntLightning;
@@ -57,9 +58,9 @@ void setup() {
   
   
   
-  pNoiseFloor = 2;      // 0 to 7
-  pSpikeRejection = 2;  // 0 to 7
-  pWatchdog = 2;
+  pNoiseFloor = 0;      // 0 to 7
+  pSpikeRejection = 0;  // 0 to 7
+  pWatchdog = 0;
   pMinLightning = 1;
   pCapValue = -1;
   
@@ -67,13 +68,14 @@ void setup() {
   cntLightning = 0;
   cntNoiseLevel = 0;
   strokeDistance = -1;
+  strokeEnergy = -1;
   
   AS3935.setNoiseFloor(pNoiseFloor);
   AS3935.setSpikeRejection(pSpikeRejection);
   AS3935.setWatchdogThreshold(pWatchdog);
   
-  AS3935.setIndoors();
-  // AS3935.setOutdoors();
+  //AS3935.setIndoors();
+  AS3935.setOutdoors();
   
   AS3935.enableDisturbers();
   // AS3935.disableDisturbers();
@@ -115,6 +117,8 @@ void loop() {
       Serial.print(",");
       Serial.print(strokeDistance,DEC);
       Serial.print(",");
+      Serial.print(strokeEnergy,DEC);
+      Serial.print(",");
       Serial.print(pNoiseFloor,DEC);
       Serial.print(",");
       Serial.print(pSpikeRejection,DEC);
@@ -122,6 +126,8 @@ void loop() {
       Serial.print(pWatchdog,DEC);
       Serial.print(",");
       Serial.print(pCapValue,DEC);
+      Serial.print(",");
+      Serial.print(pIndoors,DEC);
       Serial.println();
     } else { 
       Serial.print("-");
@@ -139,6 +145,7 @@ void loop() {
     cntLightning = 0;
     cntNoiseLevel = 0;
     strokeDistance = -1;
+    strokeEnergy = -1;
     timer = 0;
   }
   
@@ -191,7 +198,7 @@ void loop() {
     else if (mode == 'a') {
       incomingByte = Serial.read();
       byte tune = 5;
-      
+      pCapValue = 5;
       long frequency = (long) AS3935.tuneAntenna(tune) * 1600;
       
       Serial.print("9");
@@ -201,6 +208,23 @@ void loop() {
       Serial.print(String(frequency));
       Serial.println();
       
+    }
+    else if (mode == 'l') {
+      // set indoors / outdoors
+      pIndoors = (int) Serial.read();
+      if (pIndoors == 1) {
+        AS3935.setIndoors();
+        Serial.print("9");
+        Serial.print(",");
+        Serial.print("1");
+        Serial.println();
+      } else {
+        AS3935.setOutdoors();  
+        Serial.print("9");
+        Serial.print(",");
+        Serial.print("0");
+        Serial.println();
+      }
     }
   }
   
@@ -245,7 +269,6 @@ void loop() {
     
     if (irqSource & 0b0000) {
       // LIGHTNING STRIKE
-      strokeEnergy = AS3935.lightningEnergy();
       strokeDistance = AS3935.lightningDistanceKm();
       if (commApp) {
         Serial.print("4");
@@ -262,12 +285,16 @@ void loop() {
       // need to find how far that lightning stroke, function returns approximate distance in kilometers,
       // where value 1 represents storm in detector's near victinity, and 63 - very distant, out of range stroke
       // everything in between is just distance in kilometers
+      strokeEnergy = AS3935.lightningEnergy();
       strokeDistance = AS3935.lightningDistanceKm();
       
       if (commApp) {
         Serial.print("1");
         Serial.print(",");
-        Serial.println(strokeDistance);
+        Serial.print(strokeDistance);
+        Serial.print(",");
+        Serial.print(strokeEnergy);
+        Serial.println();
       } else {
         if (strokeDistance == 1)
           Serial.println("Storm overhead, watch out!");

@@ -6,7 +6,7 @@ import java.io.FileWriter;
 
 Serial myPort;  // Create object from Serial class
 String logFile = "lightning_log.csv";
-String msgCol[] = {"mode", "intv", "dist", "light", "km", "nfloor", "spike", "watchd", "tune"};
+String msgCol[] = {"mode", "intv", "dist", "light", "km", "energy", "nfloor", "spike", "watchd", "tune", "indoors"};
 
 PFont f1;
 PFont f2;
@@ -18,10 +18,12 @@ int interval = -1;
 int lightningCnt = -1;
 int disturberCnt = -1;
 int distance = -1;
+long energy = -1;
 int pNoiseFloor = -1;
 int pSpikeRejection = -1;
 int pWatchdog = -1;
 int pTuneCapacitor = -1;
+int indoors = 0;
 
 int historyLightning[];
 int historyDisturber[];
@@ -113,6 +115,10 @@ void draw() {
   text(setSpike + " [sd]>t", 150,y);
   text(setWatchdog + " [qw]>t", 280,y);
   fill(255);
+  y+= 60;
+  textFont(f1);
+  if (indoors==1) text("indoors", 20,y);
+  else text("outdoors", 20, y);
   
   // draw history
   fill(200);
@@ -150,7 +156,7 @@ void draw() {
   x = 20;
   m = (width - (2*x) ) / (float) historyDisturber.length;
   for (int i=0; i<60; i++) {
-    float v = historyDisturber[i] * 1;
+    float v = historyDisturber[i] * 3;
     vertex(x + i*m, 550 - v);
   }
   endShape();
@@ -186,10 +192,11 @@ void serialEvent(Serial myPort) {
       disturberCnt = cnts[2];
       lightningCnt = cnts[3];
       distance = cnts[4];
-      pNoiseFloor = cnts[5];
-      pSpikeRejection = cnts[6];
-      pWatchdog = cnts[7];
-      pTuneCapacitor = cnts[8];
+      energy = cnts[5];
+      pNoiseFloor = cnts[6];
+      pSpikeRejection = cnts[7];
+      pWatchdog = cnts[8];
+      pTuneCapacitor = cnts[9];
       
       addToLightningHistory(lightningCnt);
       addToDisturberHistory(disturberCnt);
@@ -252,6 +259,13 @@ void serialEvent(Serial myPort) {
     else if (key == 'o') {
       setInterval-=5;
       if (setInterval < 5) setInterval = 5;
+    }
+    else if (key == 'l') {
+      indoors = (indoors==0) ? 1 : 0;
+      myPort.write('l');
+      char c = (char) indoors;
+      myPort.write(c);
+     println("COMMAND\ttoggle indoor/outdoor  (0=outdoor, 1=indoor)"); 
     }
     else if (key == 'n') {
       setNoiseFloor+=1;

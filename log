@@ -1,37 +1,83 @@
-So far: 
 
-setup with Arduino Mega (ATmega1280)
-tuning of antenna works
+TODO
+--------
+- energy_calc function from striker
+- igniter disturber tests
+- LED circuit
+- solenoid circuit
+- run board on battery to test grounding issue
 
+
+
+
+
+
+TIPS and TODOS
+-------------------
+Measuring antenna frequency with clock
+	I found that the typical way on the Arduino of timing pulses over a delay cycle isn't accurate enough, and lead to some variance between adjacent cap settings, so I used the oscillator built into the realtime clock as that's very accurate for timing. (more accurate than the cpu oscillator)
+http://www.wxforum.net/index.php?topic=22235.25
+	- 	don't connect with USB to computer!
+	-	The AS3935 doesn't detect when grounded to mains ground.
+	-	When everything is right, it works well at the default settings (indoor / 2/2/2)
+	- 	Battery powered is better.
+	- 	Recalibrate after every AS3935 setting change
+
+
+
+experience reports
+-------------------
+	- My experience with the AS3935 so far is that, setting it too sensitive makes it less sensitive to local strikes, and make it less sensitive makes it's less sensitive to remote strikes.
+	- grounding an AS3935 I've found to seriously reduce the number of strikes that
+
+
+
+
+
+Successfull measurements
+------------------------
+Sept 5th
+0,0,0,outdoors > 37km, 20km, 20km 
+0,0,0,outdoors,5 > 40km, 37km, 34km, 34km, 27km
+1,0,0,outdoors,5 > 27km, 24km, 
+
+
+
+CALIBRATION
+---------------
 need to set all thresholds properly to avoid false positives
 - watchdog threshold : 0...7
 - noise floor threshold : 0...7
 - spike rejection threshold : 0...7
 - AFE gain : setIndoors..or..setOutdoors
 
-
-log out over time to judge thresholds
-- disturber cnts
-- lightning cnts
-- with current threshold values
-
-interrupts:
-- lightning event, with distance / energy
-
 compare to
 - blitzortung 
 
+should probably get myself a spark ignitor to test
+- http://www.robotshop.com/ca/en/sfe-piezo-clicking-igniter.html
+- https://www.sparkfun.com/products/11218
+? solenoids
 
-from
-https://github.com/SkyeSweeney/Striker/blob/5946bf5c8956c8979943eb6104f00f0a986eb134/as3935.h
-implement:
-- as3935_get_energy_calc
 
 
-Report:
-Lightning is detected by sensing electromagnetic radiation.
 
-The incoming signal to the IC needs to be tuned to a resonant frequency of 500.000 Hertz, +-3.5%. It is tuned by selecting the parameters of its RLC resonator. The capacitor of which is variable (=tuning capacitor). You set the capacitor value (16 discrete options), then you detect the current antenna frequency by counting the oscillation on the _IRQPin. Then you adjust if the value is not close to 500.000 Hz. 
+
+libraries
+----------
+another Arduino library: 
+https://github.com/SkyeSweeney/Striker/
+
+
+Report
+--------
+Lightning is detected by sensing electromagnetic radiation. Lightning strikes are electrostatic discharge, reacting to the high electric potential btw a thunderstorms negatively charged bottom layer and earth's positively charged ground. The rapidly changing currents of the strike cause electromagnetic pulses (pulse time 10-150ms) in the VLF (3k-30kHz) and ELF (<3kHz) radio bands. The maximum amplitude lies around 5-10KHz. 
+
+	"The AMS does not simply look for a peak over a threshold. They look for the multi stage crackling signature of a lightning stroke. Where a series of small events occur before the major stoke occurs. This allows them to filter out noise events from things like solenoids from generating false alarms.
+
+	500 kHz was likely picked as it is a section of the RF spectrum that gets little HAM use, hence little interference"
+
+The incoming signal to the IC needs to be tuned to the resonant frequency of 500.000 Hertz, +-3.5%  It is tuned by selecting the parameters of its RLC resonator. The capacitor of which is variable (=tuning capacitor). You set the capacitor value (16 discrete options), then you detect the current antenna frequency by counting the square-wave oscillation on the _IRQPin. Then you adjust if the value is not close to 500.000 Hz. 
 
 tune antenna to capacitor 0	 gives frequency: 3165 = 506400 Hz
 tune antenna to capacitor 1	 gives frequency: 3129 = 500640 Hz
@@ -50,11 +96,13 @@ tune antenna to capacitor 13	 gives frequency: 3041 = 486560 Hz
 tune antenna to capacitor 14	 gives frequency: 3032 = 485120 Hz
 tune antenna to capacitor 15	 gives frequency: 3023 = 483680 Hz
 
-Changes to the IC thresholds seem to change the antenna frequency values, and therefore require recalibration calls.
+Values vary over time!! Either due to faults in the measurement (no reliable clock) or due to environmental influences on hardware?
+Changes to the IC thresholds seem to change the antenna frequency values, and therefore require recalibration calls?
 
 
 
-Questions:
+Questions
+-----------
 - what does the electromagnetic signal of lightning look like?
 - antenna capacitor tuning changes over time? or is due to hardware (antenna)?
 - difference btw intra-cloud and cloud-to-ground lightning?
@@ -62,14 +110,34 @@ Questions:
 - Why 500khz? The proprietary algorithm in the Sensor IC seems to be hardcoded for that frequency? 
 - should the antenna/IC be placed at a distance from the Arduino? 
 - orientation of antenna matters?
+- setup should not be grounded? use opto-isolators for the SPI lines? 
+- better if not connected to computer?
+- what is recommended capacitor tune value for Tindie board?
+- what is a normal distruber count?   10 / sec
+
+
+
+makes me want to build
+------------------------
+-	EMF meter
+-	RF explorer, spectrum analyzer
 
 
 
 
+Montreal weather
+-----------------
+http://weather.gc.ca/radar/index_e.html?id=WMN
+http://montreal.weatherstats.ca/
+http://www.windfinder.com/report/st_hubert_montreal
 
 
+Lightning Detection Objects / Circuits
+---------------------------------------
+http://en.wikipedia.org/wiki/Franklin_bells
+http://www.techlib.com/electronics/lightning.html
+http://www.techlib.com/electronics/lightningnew.htm
+ttp://io9.com/5946483/make-your-own-lightning-alarm
 
-
-http://www.wxforum.net/index.php?PHPSESSID=d3e68359878d46800250c378fd8e9b72&topic=22235.75
-
-http://www.wxforum.net/index.php?topic=22235.0
+http://www.lessemf.com/kits.html
+http://missionscience.nasa.gov/ems/

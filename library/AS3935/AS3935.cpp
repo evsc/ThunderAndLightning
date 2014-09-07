@@ -229,7 +229,7 @@ void AS3935::powerUp()
 	registerWrite(AS3935_PWD,0);
 	_SPITransfer2(0x3D, 0x96);
 	delay(3);
-	
+
 	// Modify REG0x08[5] = 1
 	registerWrite(AS3935_DISP_TRCO,1);
 	delay(2);
@@ -268,9 +268,24 @@ int AS3935::lightningDistanceKm()
 	return registerRead(AS3935_DISTANCE);
 }
 
-int AS3935::lightningEnergy()
+long AS3935::lightningEnergy()
 {
-	return registerRead(AS3935_DISTANCE);
+	long v = 0;
+	char bits8[4];
+
+	Energy_u e;
+	REG_u reg4, reg5, reg6;
+
+	char err;
+
+	bits8[3] = 0;
+	bits8[2] = registerRead(AS3935_ENERGY_3);
+	bits8[1] = registerRead(AS3935_ENERGY_2);
+	bits8[0] = registerRead(AS3935_ENERGY_1);
+
+	v = bits8[2]*65536 + bits8[1]*256 + bits8[0];
+
+	return v;
 }
 
 void AS3935::setIndoors()

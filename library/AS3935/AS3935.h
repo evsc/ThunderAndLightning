@@ -44,6 +44,9 @@
 #define AS3935_DISP_SRCO	0x08, 0x40
 #define AS3935_DISP_TRCO	0x08, 0x20
 #define AS3935_TUN_CAP		0x08, 0x0F
+#define AS3935_ENERGY_1		0x04, 0xFF
+#define AS3935_ENERGY_2		0x05, 0xFF
+#define AS3935_ENERGY_3		0x06, 0x1F
 
 // other constants
 #define AS3935_AFE_INDOOR	0x12
@@ -67,7 +70,7 @@ public:
 	int getMinimumLightnings();
 	int setMinimumLightnings(int minlightning);
 	int lightningDistanceKm();
-	int lightningEnergy();
+	long lightningEnergy();
 	void setIndoors();
 	void setOutdoors();
 	int getNoiseFloor();
