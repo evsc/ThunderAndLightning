@@ -273,8 +273,8 @@ long AS3935::lightningEnergy()
 	long v = 0;
 	char bits8[4];
 
-	Energy_u e;
-	REG_u reg4, reg5, reg6;
+	// Energy_u e;
+	// REG_u reg4, reg5, reg6;
 
 	char err;
 

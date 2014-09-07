@@ -206,6 +206,9 @@ void serialEvent(Serial myPort) {
       print("Lightning! Storm front is at ");
       print(cnts[1]);
       println("km");
+      print("Energy = ");
+      print(cnts[2]);
+      println();
       lightningEvent = true;
     } else if (cnts[0] == 2) {
       // receive disturber events
