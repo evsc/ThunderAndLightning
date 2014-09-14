@@ -1,15 +1,16 @@
 
 TODO
 --------
-- energy_calc function from striker
 - igniter disturber tests
 - LED circuit
 - solenoid circuit
 - run board on battery to test grounding issue
 
 
-
-
+shopping list
+-------------
+- Arduino Pro Mini 328
+- FTDI programmer
 
 
 TIPS and TODOS
@@ -53,6 +54,9 @@ need to set all thresholds properly to avoid false positives
 
 compare to
 - blitzortung 
+- http://weather.gc.ca/lightning/index_e.html
+- http://www.strikestarus.com/
+- http://wwlln.net/new/map/
 
 should probably get myself a spark ignitor to test
 - http://www.robotshop.com/ca/en/sfe-piezo-clicking-igniter.html
@@ -60,6 +64,13 @@ should probably get myself a spark ignitor to test
 ? solenoids
 
 
+
+AS3935-related
+---------------
+http://www.digikey.ca/en/articles/techzone/2013/mar/incoming-storm-a-lightning-detector-from-ams
+
+- 	http://www.electronicproducts.com/Sensors_and_Transducers/Sensors_and_Transducers/Designing_truly_portable_lightning_detectors.aspx
+AMS paper about lightning signature at 500kHz band
 
 
 

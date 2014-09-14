@@ -38,10 +38,26 @@ int strokeEnergy;
 
 int timer;
 unsigned long currentTime;
+unsigned long lastTime;
 unsigned long startTime;
+int dt;
 int every;
 
 boolean commApp;   // communicate Serial to app, or write to serial-monitor
+
+float speedSound = 0.343;  // km per second
+
+#define LightningPin 4
+#define DisturberPin 5
+#define ThunderPin 6
+
+int showLightning = 100;  // milliseconds. turn on light
+int showDisturber = 50;
+int showThunder = 100;
+int timerLightning = 0;  // ms
+int timerDisturber = 0;  // ms
+unsigned long delayThunder = 0;  // adjust according to current lightning distance
+int timerThunder = 0;    // ms 
 
 void setup() {
   
@@ -90,8 +106,18 @@ void setup() {
   recalibrate();
   
   timer = 0;
+  dt = 0;
   every = 60;
   startTime = millis();
+  lastTime = startTime;
+  
+  pinMode(LightningPin,OUTPUT);
+  pinMode(DisturberPin,OUTPUT);
+  pinMode(ThunderPin,OUTPUT);
+  
+  digitalWrite(LightningPin,LOW);
+  digitalWrite(DisturberPin,LOW);
+  digitalWrite(ThunderPin,LOW);
 
 }
 
@@ -100,7 +126,58 @@ void loop() {
   
   // time to output log data?
   currentTime = millis();
-  timer = (currentTime - startTime)/1000;
+  dt = currentTime - lastTime;  // milliseconds since last loop()
+  lastTime = currentTime;
+  timer = (currentTime - startTime)/1000;  // seconds since last log
+  
+  
+  // LED lightning
+  if (timerLightning>0) {
+    // this means the LED is on
+    timerLightning -= dt;
+    if (timerLightning <= 0) {
+      // enough time has passed, turn LED off
+      digitalWrite(LightningPin,LOW);
+      timerLightning = 0;
+    }
+  }
+  
+  // LED distruber
+  if (timerDisturber>0) {
+    // this means the LED is on
+    timerDisturber -= dt;
+    if (timerDisturber <= 0) {
+      // enough time has passed, turn LED off
+      digitalWrite(DisturberPin,LOW);
+      timerDisturber = 0;
+    }
+  }
+  
+  // wait for thunder
+  if (delayThunder>0) {
+    // this means lightning just happened 
+    // (TODO: need array of counters for several strikes in short time)
+    delayThunder -= dt;
+    if (delayThunder <= 0) {
+      timerThunder = showThunder;
+      digitalWrite(ThunderPin, HIGH);
+      delayThunder = 0;
+    }
+  }
+  
+  // Solenoid thunder
+  if (timerThunder>0) {
+    // this means the Solenoid is on
+    timerThunder -= dt;
+    if (timerThunder <= 0) {
+      // enough time has passed, turn Solenoid off
+      digitalWrite(ThunderPin,LOW);
+      timerThunder = 0;
+    }
+  }
+  
+  
+  
   if (timer >= every) {
     startTime = millis();
     
@@ -265,6 +342,11 @@ void loop() {
         Serial.println("Disturber detected");
       }
       cntDisturber++;
+      timerDisturber = showDisturber;
+      digitalWrite(DisturberPin,HIGH);
+      // lets use this to make thunder for now
+      // assume 5km distance
+      delayThunder = speedSound * 5000;
     }
     
     if (irqSource & 0b0000) {
@@ -279,6 +361,9 @@ void loop() {
         Serial.print(strokeDistance,DEC);
         Serial.println(" km.");
       }
+      
+      timerLightning = showLightning;
+      digitalWrite(LightningPin,HIGH);
     }
       
     if (irqSource & 0b1000) {
