@@ -198,27 +198,22 @@ Questions
 
 Links, Reports on AS3935
 ----
-http://www.digikey.ca/en/articles/techzone/2013/mar/incoming-storm-a-lightning-detector-from-ams
-
-http://www.electronicproducts.com/Sensors_and_Transducers/Sensors_and_Transducers/Designing_truly_portable_lightning_detectors.aspx AMS paper about lightning signature at 500kHz band
-
-http://www.rs-online.com/designspark/electronics/blog/detecting-lightning-with-an-arduino
-
-http://coffeewithrobots.com/detecting-lightning-with-a-raspberry-pi/
-
-http://fll-freak.com/blog/?p=554
+* http://www.digikey.ca/en/articles/techzone/2013/mar/incoming-storm-a-lightning-detector-from-ams
+* http://www.electronicproducts.com/Sensors_and_Transducers/Sensors_and_Transducers/Designing_truly_portable_lightning_detectors.aspx 
+* http://www.rs-online.com/designspark/electronics/blog/detecting-lightning-with-an-arduino
+* http://coffeewithrobots.com/detecting-lightning-with-a-raspberry-pi/
+* http://fll-freak.com/blog/?p=554
 
 
 
 Other Lightning Detection Objects / Circuits
 ---------------------------------------
-http://en.wikipedia.org/wiki/Franklin_bells
-http://www.techlib.com/electronics/lightning.html
-http://www.techlib.com/electronics/lightningnew.htm
-ttp://io9.com/5946483/make-your-own-lightning-alarm
-
-http://www.lessemf.com/kits.html
-http://missionscience.nasa.gov/ems/
+* http://en.wikipedia.org/wiki/Franklin_bells  
+* http://www.techlib.com/electronics/lightning.html  
+* http://www.techlib.com/electronics/lightningnew.htm  
+* http://io9.com/5946483/make-your-own-lightning-alarm  
+* http://www.lessemf.com/kits.html  
+* http://missionscience.nasa.gov/ems/  
 
 
 
