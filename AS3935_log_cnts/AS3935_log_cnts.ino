@@ -13,6 +13,8 @@
 #include <SPI.h>
 #include <AS3935.h>
 
+// #define A_MEGA_1280
+#define A_PRO_MINI
 
 void updateAS3935Registers();
 byte SPItransfer(byte sendByte);  // SPI communication with AS3935 IC
@@ -20,7 +22,15 @@ void AS3935Irq();  // interrupt handler
 volatile int AS3935IrqTriggered;
 
 #define IRQpin 2
-#define CSpin 53
+
+#ifdef A_MEGA_1280
+  #define CSpin 53
+#endif
+
+#ifdef A_PRO_MINI
+  #define CSpin 10
+#endif
+  
 AS3935 AS3935(SPItransfer,CSpin,IRQpin);  // define Chip-Select and Interrupt Pins
 
 int pNoiseFloor;
