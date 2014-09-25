@@ -40,6 +40,8 @@ I added some minor functionality to the library (see library directory in this r
 * getIRQ() - to see whats happening on the IRQ pin
 
 
+Pin-out for [Arduino Mega 1280](http://arduino.cc/en/Main/arduinoBoardMega). Powered with 9V battery connected to power jack of Arduino board. 
+
 	AS3935 breakout board 		Arduino Mega 1280
 
 	VDD             			5V (Arduino)
