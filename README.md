@@ -58,7 +58,7 @@ Pin-out for [Arduino Mega 1280](http://arduino.cc/en/Main/arduinoBoardMega). Pow
 	thunder 					6
 
 
-Setup for [Arduino Pro Mini 3.3V](http://arduino.cc/en/Main/ArduinoBoardProMini. If powering Arduino with more than 3.3V, be sure to use RAW pin (and not VCC).
+Setup for [Arduino Pro Mini 3.3V](http://arduino.cc/en/Main/ArduinoBoardProMini). If powering Arduino with more than 3.3V, be sure to use RAW pin (and not VCC).
 
 	AS3935 breakout board 		Arduino Pro Mini 3.3V
 
