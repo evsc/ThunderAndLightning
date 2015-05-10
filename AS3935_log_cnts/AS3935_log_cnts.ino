@@ -66,7 +66,7 @@ int showDisturber = 50;
 int showThunder = 100;
 int timerLightning = 0;  // ms
 int timerDisturber = 0;  // ms
-unsigned long delayThunder = 0;  // adjust according to current lightning distance
+long delayThunder = 0;  // adjust according to current lightning distance
 int timerThunder = 0;    // ms 
 
 void setup() {
@@ -103,8 +103,8 @@ void setup() {
   //AS3935.setIndoors();
   AS3935.setOutdoors();
   
-  AS3935.enableDisturbers();
-  // AS3935.disableDisturbers();
+  // AS3935.enableDisturbers();
+  AS3935.disableDisturbers();
   
   AS3935IrqTriggered = 0;
   attachInterrupt(0,AS3935Irq,RISING);
@@ -128,6 +128,11 @@ void setup() {
   digitalWrite(LightningPin,LOW);
   digitalWrite(DisturberPin,LOW);
   digitalWrite(ThunderPin,LOW);
+  
+  // show lightning LEDs as test
+  timerLightning = showLightning;
+  digitalWrite(LightningPin,HIGH);
+  delayThunder = speedSound * 1 * 1000;
 
 }
 
@@ -356,11 +361,11 @@ void loop() {
       digitalWrite(DisturberPin,HIGH);
       // lets use this to make thunder for now
       // assume 5km distance
-      delayThunder = speedSound * 5000;
+      // delayThunder = speedSound * 5000;
     }
     
     if (irqSource & 0b0000) {
-      // LIGHTNING STRIKE
+      // update to stroke distance
       strokeDistance = AS3935.lightningDistanceKm();
       if (commApp) {
         Serial.print("4");
@@ -371,12 +376,12 @@ void loop() {
         Serial.print(strokeDistance,DEC);
         Serial.println(" km.");
       }
-      
-      timerLightning = showLightning;
-      digitalWrite(LightningPin,HIGH);
+
     }
       
     if (irqSource & 0b1000) {
+      // LIGHTNING STRIKE
+      
       // need to find how far that lightning stroke, function returns approximate distance in kilometers,
       // where value 1 represents storm in detector's near victinity, and 63 - very distant, out of range stroke
       // everything in between is just distance in kilometers
@@ -402,6 +407,12 @@ void loop() {
           Serial.println(" kilometers away.");
         }
       }
+      
+      timerLightning = showLightning;
+      digitalWrite(LightningPin,HIGH);
+      
+      // activate thunder
+      delayThunder = speedSound * strokeDistance * 1000;
       
       cntLightning++;
     }
